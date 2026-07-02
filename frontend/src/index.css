@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #000000;
+  --surface-1: #0a0a0a;
+  --surface-2: #121214;
+  --surface-3: #1a1a1a;
+  --hairline: #1f1f22;
+  --hairline-hover: #333333;
+  --text-1: #f2f2f2;
+  --text-2: #a1a1aa;
+  --text-3: #71717a;
+  --acid: #d4ff00;
+  --acid-hover: #bee600;
+  --success: #00ffaa;
+  --warning: #ffb800;
+  --danger: #ff3366;
+  --info: #00e5ff;
+}
+
+/* Set default border color for the design system (does not force borders to appear;
+   only sets the color used when a border-* utility is applied). */
+*, *::before, *::after {
+  border-color: var(--hairline);
+}
+
+html, body, #root {
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: "Outfit", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", monospace !important;
+}
+
+/* Selection */
+::selection {
+  background: var(--acid);
+  color: #000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hairline);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hairline-hover);
+}
+
+/* Shadcn theme mapping (dark AMOLED) */
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 71 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 240 4% 8%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 4% 8%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 10%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 350 100% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5% 12%;
+    --input: 240 5% 12%;
+    --ring: 71 100% 50%;
+    --radius: 0.5rem;
+    --chart-1: 71 100% 50%;
+    --chart-2: 187 100% 50%;
+    --chart-3: 350 100% 60%;
+    --chart-4: 160 100% 50%;
+    --chart-5: 38 100% 55%;
+  }
+}
+
+/* Utility helpers */
+.hairline {
+  border-color: var(--hairline);
+}
+.hairline-hover:hover {
+  border-color: var(--hairline-hover);
+}
+
+/* Custom checkbox pulse when done */
+@keyframes acid-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(212, 255, 0, 0.4); }
+  100% { box-shadow: 0 0 0 8px rgba(212, 255, 0, 0); }
+}
+.acid-pulse {
+  animation: acid-pulse 0.6s ease-out;
+}
+
+/* Reveal animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.35s ease-out both; }
+
+/* Grid noise */
+.grid-noise {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
