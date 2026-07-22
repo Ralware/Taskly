@@ -9,11 +9,9 @@ import {
   CalendarDays,
   BarChart3,
   StickyNote,
-  Target,
   Settings as SettingsIcon,
   Database,
   Layers,
-  Flame,
 } from "lucide-react";
 
 const NAV_LINKS = [
@@ -26,9 +24,7 @@ const NAV_LINKS = [
   { to: "/calendar", label: "Calendar", icon: CalendarDays, testid: "nav-calendar" },
   { to: "/stats", label: "Statistics", icon: BarChart3, testid: "nav-stats" },
   { to: "/notes", label: "Notes", icon: StickyNote, testid: "nav-notes" },
-  { to: "/goals", label: "Goals", icon: Target, testid: "nav-goals" },
   { to: "/projects", label: "Projects", icon: Layers, testid: "nav-projects" },
-  { to: "/habits", label: "Habits", icon: Flame, testid: "nav-habits" },
   { to: "/settings", label: "Settings", icon: SettingsIcon, testid: "nav-settings" },
   { to: "/backup", label: "Backup", icon: Database, testid: "nav-backup" },
 ];

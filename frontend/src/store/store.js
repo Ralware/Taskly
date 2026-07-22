@@ -11,9 +11,7 @@ export const useStore = create((set, get) => ({
   categories: [],
   revisions: [],
   notes: [],
-  goals: [],
   projects: [],
-  habits: [],
   settings: null,
   summary: null,
   loading: false,
@@ -29,19 +27,17 @@ export const useStore = create((set, get) => ({
 
   loadAll: async () => {
     set({ loading: true });
-    const [tasks, categories, revisions, notes, goals, projects, habits, settings, summary] =
+    const [tasks, categories, revisions, notes, projects, settings, summary] =
       await Promise.all([
         safe(api.listTasks(), []),
         safe(api.listCategories(), []),
         safe(api.listRevisions(), []),
         safe(api.listNotes(), []),
-        safe(api.listGoals(), []),
         safe(api.listProjects(), []),
-        safe(api.listHabits(), []),
         safe(api.getSettings(), null),
         safe(api.statsSummary(), null),
       ]);
-    set({ tasks, categories, revisions, notes, goals, projects, habits, settings, summary, loading: false });
+    set({ tasks, categories, revisions, notes, projects, settings, summary, loading: false });
   },
 
   refreshTasks: async () => {
@@ -54,9 +50,7 @@ export const useStore = create((set, get) => ({
   refreshRevisions: async () => set({ revisions: await safe(api.listRevisions(), get().revisions) }),
   refreshCategories: async () => set({ categories: await safe(api.listCategories(), get().categories) }),
   refreshNotes: async () => set({ notes: await safe(api.listNotes(), get().notes) }),
-  refreshGoals: async () => set({ goals: await safe(api.listGoals(), get().goals) }),
   refreshProjects: async () => set({ projects: await safe(api.listProjects(), get().projects) }),
-  refreshHabits: async () => set({ habits: await safe(api.listHabits(), get().habits) }),
   refreshSummary: async () => set({ summary: await safe(api.statsSummary(), get().summary) }),
 
   // Optimistic-ish updates: patch the affected task locally to avoid a full refetch
