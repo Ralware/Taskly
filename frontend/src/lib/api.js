@@ -208,31 +208,6 @@ export const api = {
   },
   deleteNote: async (id) => { await db.notes.delete(id); return { deleted: 1 }; },
 
-  // ---- goals ----
-  listGoals: () => db.goals.toArray(),
-  createGoal: async (d) => {
-    const g = {
-      id: uid(),
-      title: d.title,
-      description: d.description || "",
-      deadline: d.deadline || null,
-      progress: d.progress ?? 0,
-      status: d.status || "active",
-      milestones: d.milestones || [],
-      created_at: now(),
-      updated_at: now(),
-    };
-    await db.goals.put(g);
-    return g;
-  },
-  updateGoal: async (id, d) => {
-    const g = await db.goals.get(id);
-    const patch = { ...g, ...d, updated_at: now() };
-    await db.goals.put(patch);
-    return patch;
-  },
-  deleteGoal: async (id) => { await db.goals.delete(id); return { deleted: 1 }; },
-
   // ---- projects ----
   listProjects: () => db.projects.toArray(),
   createProject: async (d) => {
@@ -260,38 +235,6 @@ export const api = {
     return patch;
   },
   deleteProject: async (id) => { await db.projects.delete(id); return { deleted: 1 }; },
-
-  // ---- habits ----
-  listHabits: () => db.habits.toArray(),
-  createHabit: async (d) => {
-    const h = {
-      id: uid(),
-      name: d.name,
-      description: d.description || "",
-      icon: d.icon || "Flame",
-      color: d.color || "#00FFAA",
-      target_per_week: d.target_per_week ?? 7,
-      logs: [],
-      created_at: now(),
-    };
-    await db.habits.put(h);
-    return h;
-  },
-  updateHabit: async (id, d) => {
-    const h = await db.habits.get(id);
-    const patch = { ...h, ...d };
-    await db.habits.put(patch);
-    return patch;
-  },
-  toggleHabitDay: async (id, day) => {
-    const h = await db.habits.get(id);
-    const logs = new Set(h.logs || []);
-    logs.has(day) ? logs.delete(day) : logs.add(day);
-    const patch = { ...h, logs: [...logs].sort() };
-    await db.habits.put(patch);
-    return patch;
-  },
-  deleteHabit: async (id) => { await db.habits.delete(id); return { deleted: 1 }; },
 
   // ---- settings ----
   getSettings,
@@ -396,17 +339,15 @@ export const api = {
     categories: await db.categories.toArray(),
     revisions: await db.revisions.toArray(),
     notes: await db.notes.toArray(),
-    goals: await db.goals.toArray(),
     projects: await db.projects.toArray(),
-    habits: await db.habits.toArray(),
   }),
   backupImport: async (payload, replace = true) => {
     if (!payload || typeof payload !== "object") throw new Error("Invalid backup file");
     const ver = payload.schema_version ?? payload.metadata?.schema_version ?? 1;
     if (ver > SCHEMA_VERSION) throw new Error(`Backup schema v${ver} is newer than app v${SCHEMA_VERSION}`);
     // Future: run migrations here if ver < SCHEMA_VERSION
-    const tables = ["tasks", "categories", "revisions", "notes", "goals", "projects", "habits"];
-    await db.transaction("rw", db.tasks, db.categories, db.revisions, db.notes, db.goals, db.projects, db.habits, db.settings, async () => {
+    const tables = ["tasks", "categories", "revisions", "notes", "projects"];
+    await db.transaction("rw", db.tasks, db.categories, db.revisions, db.notes, db.projects, db.settings, async () => {
       if (replace) for (const t of tables) await db[t].clear();
       for (const t of tables) if (Array.isArray(payload[t])) await db[t].bulkPut(payload[t]);
       if (payload.settings) await db.settings.put({ ...payload.settings, id: "default" });

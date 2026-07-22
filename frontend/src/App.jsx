@@ -16,9 +16,7 @@ import Categories from "@/pages/Categories";
 import CalendarPage from "@/pages/CalendarPage";
 import Statistics from "@/pages/Statistics";
 import Notes from "@/pages/Notes";
-import Goals from "@/pages/Goals";
 import Projects from "@/pages/Projects";
-import Habits from "@/pages/Habits";
 import Settings from "@/pages/Settings";
 import Backup from "@/pages/Backup";
 
@@ -47,9 +45,7 @@ function Shell() {
             <Route path="/calendar" element={<CalendarPage />} />
             <Route path="/stats" element={<Statistics />} />
             <Route path="/notes" element={<Notes />} />
-            <Route path="/goals" element={<Goals />} />
             <Route path="/projects" element={<Projects />} />
-            <Route path="/habits" element={<Habits />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/backup" element={<Backup />} />
           </Routes>
