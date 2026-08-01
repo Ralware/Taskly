@@ -91,7 +91,7 @@ export default function CalendarPage() {
                         key={idx}
                         className="w-1.5 h-1.5 rounded-full"
                         style={{
-                          background: it.type === "done" ? "#00FFAA" : it.type === "rev" ? "#00E5FF" : "var(--acid)",
+                          background: it.type === "done" ? "var(--success)" : it.type === "rev" ? "var(--info)" : "var(--acid)",
                         }}
                       />
                     ))}
@@ -114,7 +114,7 @@ export default function CalendarPage() {
                   <span
                     className="mt-1.5 w-2 h-2 rounded-full shrink-0"
                     style={{
-                      background: it.type === "done" ? "#00FFAA" : it.type === "rev" ? "#00E5FF" : "var(--acid)",
+                      background: it.type === "done" ? "var(--success)" : it.type === "rev" ? "var(--info)" : "var(--acid)",
                     }}
                   />
                   <div className="flex-1 min-w-0">

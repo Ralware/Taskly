@@ -3,32 +3,48 @@
 @tailwind utilities;
 
 :root {
-  --bg: #000000;
-  --surface-1: #0a0a0a;
-  --surface-2: #121214;
-  --surface-3: #1a1a1a;
-  --hairline: #1f1f22;
-  --hairline-hover: #333333;
-  --text-1: #f2f2f2;
-  --text-2: #a1a1aa;
-  --text-3: #71717a;
+  --background: #000000;
+  --surface: #0a0a0a;
+  --surface-hover: #121214;
+  --surface-raised: #1a1a1a;
+  --border: #1f1f22;
+  --border-hover: #333333;
+  --text-primary: #f2f2f2;
+  --text-secondary: #a1a1aa;
+  --muted: #71717a;
   --acid: #d4ff00;
   --acid-hover: #bee600;
   --success: #00ffaa;
   --warning: #ffb800;
   --danger: #ff3366;
   --info: #00e5ff;
+  --overlay: rgb(0 0 0 / 70%);
+  --shadow: rgb(0 0 0 / 30%);
+}
+
+:root[data-theme="light"] {
+  --background: #f7f8fa;
+  --surface: #ffffff;
+  --surface-hover: #f1f3f5;
+  --surface-raised: #e9edf1;
+  --border: #d9dfe6;
+  --border-hover: #aeb8c4;
+  --text-primary: #16202a;
+  --text-secondary: #4b5a68;
+  --muted: #6b7885;
+  --overlay: rgb(22 32 42 / 42%);
+  --shadow: rgb(22 32 42 / 12%);
 }
 
 /* Set default border color for the design system (does not force borders to appear;
    only sets the color used when a border-* utility is applied). */
 *, *::before, *::after {
-  border-color: var(--hairline);
+  border-color: var(--border);
 }
 
 html, body, #root {
-  background: var(--bg);
-  color: var(--text-1);
+  background: var(--background);
+  color: var(--text-primary);
   font-family: "Manrope", -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -63,11 +79,11 @@ h1, h2, h3, h4, h5, h6, .font-display {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--hairline);
+  background: var(--border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--hairline-hover);
+  background: var(--border-hover);
 }
 
 /* Shadcn theme mapping (dark AMOLED) */
@@ -103,21 +119,48 @@ h1, h2, h3, h4, h5, h6, .font-display {
 
 /* Utility helpers */
 .hairline {
-  border-color: var(--hairline);
+  border-color: var(--border);
 }
 .hairline-hover:hover {
-  border-color: var(--hairline-hover);
+  border-color: var(--border-hover);
 }
 
 @layer components {
   .surface-card {
-    @apply rounded-xl border border-[#1f1f22] bg-[#0A0A0A];
+    @apply rounded-xl border;
+    background-color: var(--surface);
+    border-color: var(--border);
+    box-shadow: 0 1px 2px var(--shadow);
   }
 
   .icon-button {
-    @apply rounded p-1.5 text-[#A1A1AA] transition-colors hover:bg-[#121214] hover:text-[#F2F2F2] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--acid)];
+    @apply rounded p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--acid)];
+    color: var(--text-secondary);
+  }
+  .icon-button:hover { background-color: var(--surface-hover); color: var(--text-primary); }
+
+  .theme-transition, .theme-transition * {
+    transition-property: background-color, border-color, color, box-shadow;
+    transition-duration: 180ms;
+    transition-timing-function: ease;
   }
 }
+
+/* Compatibility tokens for existing utility classes while pages migrate to shared primitives. */
+.bg-black { background-color: var(--background) !important; }
+.bg-\[\#050505\], .bg-\[\#0A0A0A\] { background-color: var(--surface) !important; }
+.bg-\[\#0f0f11\], .bg-\[\#121214\] { background-color: var(--surface-hover) !important; }
+.bg-\[\#1a1a1a\], .bg-\[\#2a2a2e\] { background-color: var(--surface-raised) !important; }
+.border-\[\#1f1f22\] { border-color: var(--border) !important; }
+.border-\[\#333\] { border-color: var(--border-hover) !important; }
+.text-\[\#F2F2F2\], .text-white { color: var(--text-primary) !important; }
+.text-\[\#A1A1AA\] { color: var(--text-secondary) !important; }
+.text-\[\#71717A\] { color: var(--muted) !important; }
+.hover\:bg-\[\#121214\]:hover, .hover\:bg-\[\#0f0f11\]:hover { background-color: var(--surface-hover) !important; }
+.hover\:border-\[\#333\]:hover { border-color: var(--border-hover) !important; }
+.hover\:text-white:hover { color: var(--text-primary) !important; }
+.bg-black\/70, .bg-black\/80 { background-color: var(--overlay) !important; }
+.shadow-2xl { --tw-shadow-color: var(--shadow); }
 
 @media (min-width: 1024px) {
   .calendar-page {

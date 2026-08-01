@@ -6,7 +6,7 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, Legend,
 } from "recharts";
 
-const COLORS = ["var(--acid)", "#00E5FF", "#FF3366", "#00FFAA", "#FFB800", "#A78BFA"];
+const COLORS = ["var(--acid)", "var(--info)", "var(--danger)", "var(--success)", "var(--warning)", "#A78BFA"];
 
 function CustomTip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
@@ -52,7 +52,7 @@ export default function Statistics() {
       <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6 mb-6">
         <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">30-day completion trend</div>
         <div className="h-64">
-          <ResponsiveContainer>
+          <ResponsiveContainer minWidth={0} minHeight={1}>
             <AreaChart data={trend}>
               <defs>
                 <linearGradient id="grad1" x1="0" y1="0" x2="0" y2="1">
@@ -60,9 +60,9 @@ export default function Statistics() {
                   <stop offset="100%" stopColor="var(--acid)" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid stroke="#1f1f22" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="date" stroke="#71717A" tick={{ fontSize: 10, fontFamily: "JetBrains Mono" }} tickFormatter={(v) => v.slice(5)} />
-              <YAxis stroke="#71717A" tick={{ fontSize: 10, fontFamily: "JetBrains Mono" }} allowDecimals={false} />
+              <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="date" stroke="var(--muted)" tick={{ fill: "var(--muted)", fontSize: 10, fontFamily: "JetBrains Mono" }} tickFormatter={(v) => v.slice(5)} />
+              <YAxis stroke="var(--muted)" tick={{ fill: "var(--muted)", fontSize: 10, fontFamily: "JetBrains Mono" }} allowDecimals={false} />
               <Tooltip content={<CustomTip />} />
               <Area type="monotone" dataKey="completed" stroke="var(--acid)" strokeWidth={2} fill="url(#grad1)" />
             </AreaChart>
@@ -74,13 +74,13 @@ export default function Statistics() {
         <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
           <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">By category</div>
           <div className="h-64">
-            <ResponsiveContainer>
+          <ResponsiveContainer minWidth={0} minHeight={1}>
               <PieChart>
                 <Pie data={byCat} dataKey="total" nameKey="name" innerRadius={50} outerRadius={90} strokeWidth={0}>
                   {byCat.map((c, i) => <Cell key={i} fill={c.color || COLORS[i % COLORS.length]} />)}
                 </Pie>
                 <Tooltip content={<CustomTip />} />
-                <Legend wrapperStyle={{ fontSize: 11, fontFamily: "JetBrains Mono" }} />
+                <Legend wrapperStyle={{ color: "var(--text-secondary)", fontSize: 11, fontFamily: "JetBrains Mono" }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -89,13 +89,13 @@ export default function Statistics() {
         <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
           <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">By priority</div>
           <div className="h-64">
-            <ResponsiveContainer>
+          <ResponsiveContainer minWidth={0} minHeight={1}>
               <BarChart data={byPrio}>
-                <CartesianGrid stroke="#1f1f22" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="priority" stroke="#71717A" tick={{ fontSize: 10, fontFamily: "JetBrains Mono" }} />
-                <YAxis stroke="#71717A" tick={{ fontSize: 10, fontFamily: "JetBrains Mono" }} allowDecimals={false} />
+                <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="priority" stroke="var(--muted)" tick={{ fill: "var(--muted)", fontSize: 10, fontFamily: "JetBrains Mono" }} />
+                <YAxis stroke="var(--muted)" tick={{ fill: "var(--muted)", fontSize: 10, fontFamily: "JetBrains Mono" }} allowDecimals={false} />
                 <Tooltip content={<CustomTip />} />
-                <Bar dataKey="total" fill="#00E5FF" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="total" fill="var(--info)" radius={[6, 6, 0, 0]} />
                 <Bar dataKey="completed" fill="var(--acid)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

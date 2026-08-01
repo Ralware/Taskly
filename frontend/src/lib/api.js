@@ -13,7 +13,7 @@ const addDays = (iso, days) => {
 
 const DEFAULT_SETTINGS = {
   id: "default",
-  theme: "amoled",
+  theme: "dark",
   accent_color: "#D4FF00",
   default_view: "dashboard",
   revision_schedule: [1, 3, 7, 14, 30],
@@ -22,12 +22,20 @@ const DEFAULT_SETTINGS = {
 };
 
 async function getSettings() {
-  const s = await db.settings.get("default");
-  if (!s) {
+  const stored = await db.settings.get("default");
+  if (!stored || typeof stored !== "object") {
     await db.settings.put(DEFAULT_SETTINGS);
     return { ...DEFAULT_SETTINGS };
   }
-  return s;
+  const settings = {
+    ...DEFAULT_SETTINGS,
+    ...stored,
+    theme: stored.theme === "light" ? "light" : "dark",
+    revision_schedule: Array.isArray(stored.revision_schedule)
+      ? stored.revision_schedule.filter((days) => Number.isInteger(days) && days > 0)
+      : DEFAULT_SETTINGS.revision_schedule,
+  };
+  return settings;
 }
 
 export const api = {
@@ -239,7 +247,7 @@ export const api = {
   // ---- settings ----
   getSettings,
   updateSettings: async (d) => {
-    const patch = { ...DEFAULT_SETTINGS, ...d, id: "default" };
+    const patch = { ...(await getSettings()), ...d, id: "default" };
     await db.settings.put(patch);
     return patch;
   },
@@ -256,10 +264,11 @@ export const api = {
     const revisions_due = revs.filter((r) => !r.completed && r.due_date <= t).length;
 
     const doneDates = [...new Set(completed.filter((x) => x.completed_at).map((x) => x.completed_at.slice(0, 10)))].sort();
+    const doneDateSet = new Set(doneDates);
     // current streak
     let current_streak = 0;
     let d = new Date();
-    while (doneDates.includes(d.toISOString().slice(0, 10))) {
+    while (doneDateSet.has(d.toISOString().slice(0, 10))) {
       current_streak += 1;
       d.setDate(d.getDate() - 1);
     }
@@ -295,12 +304,17 @@ export const api = {
   },
   statsTrend: async (days = 30) => {
     const all = await db.tasks.where("status").equals("completed").toArray();
+    const completedByDate = new Map();
+    all.forEach((task) => {
+      const date = task.completed_at?.slice(0, 10);
+      if (date) completedByDate.set(date, (completedByDate.get(date) || 0) + 1);
+    });
     const out = [];
     const base = new Date();
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(base); d.setDate(base.getDate() - i);
       const key = d.toISOString().slice(0, 10);
-      out.push({ date: key, completed: all.filter((t) => (t.completed_at || "").startsWith(key)).length });
+      out.push({ date: key, completed: completedByDate.get(key) || 0 });
     }
     return out;
   },

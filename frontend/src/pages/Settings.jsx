@@ -3,24 +3,24 @@ import { api } from "@/lib/api";
 import { PageHeader } from "@/components/Primitives";
 import { useStore } from "@/store/store";
 import { Select, Input, Switch } from "@/components/ui-atoms";
+import { useTheme } from "@/components/ThemeProvider";
 
 const ACCENT_COLORS = ["#D4FF00", "#00E5FF", "#FF3366", "#00FFAA", "#FFB800"];
 
 export default function Settings() {
-  const { settings, refreshSummary } = useStore();
+  const { settings } = useStore();
+  const { theme, setTheme } = useTheme();
   const [form, setForm] = useState(null);
 
   useEffect(() => { if (settings) setForm(settings); }, [settings]);
 
   // Persist changes immediately — no Save button.
   async function persist(patch) {
+    if (!form) return;
     const next = { ...form, ...patch };
     setForm(next);
     // Instant DOM write — no wait for React re-render / ThemeProvider effect
-    if (patch.accent_color) {
-      document.documentElement.style.setProperty("--acid", patch.accent_color);
-      document.documentElement.style.setProperty("--acid-hover", patch.accent_color);
-    }
+    if (patch.accent_color) document.documentElement.style.setProperty("--acid", patch.accent_color);
     await api.updateSettings(next);
     useStore.setState({ settings: next });
   }
@@ -31,9 +31,10 @@ export default function Settings() {
     <div className="p-8 lg:p-12 max-w-3xl" data-testid="settings-page">
       <PageHeader title="Settings" subtitle="Changes save instantly and stay on this device." />
       <div className="space-y-3">
-        <Row label="Theme" hint="AMOLED dark is the default. Light mode intentionally not supported.">
-          <Select value={form.theme} onChange={(e) => persist({ theme: e.target.value })} className="w-48">
-            <option value="amoled">AMOLED Dark</option>
+        <Row label="Theme" hint="Your preference is saved on this device and applies instantly.">
+          <Select value={theme} onChange={(e) => { setTheme(e.target.value); persist({ theme: e.target.value }); }} className="w-48">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
           </Select>
         </Row>
 
@@ -65,7 +66,7 @@ export default function Settings() {
           <Input
             data-testid="revision-schedule-input"
             className="w-48"
-            value={form.revision_schedule.join(", ")}
+            value={(form.revision_schedule || []).join(", ")}
             onChange={(e) =>
               persist({
                 revision_schedule: e.target.value.split(",").map((s) => parseInt(s.trim())).filter((n) => !Number.isNaN(n)),
