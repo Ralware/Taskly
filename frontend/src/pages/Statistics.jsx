@@ -39,7 +39,7 @@ export default function Statistics() {
   if (!summary) return <div className="p-8 text-[#71717A]">Loading statistics…</div>;
 
   return (
-    <div className="p-8 lg:p-12" data-testid="statistics-page">
+    <div className="min-w-0 max-w-full overflow-x-hidden p-8 lg:p-12" data-testid="statistics-page">
       <PageHeader title="Statistics" subtitle="Signal, not noise. Track completion velocity and productivity patterns." />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
@@ -49,9 +49,9 @@ export default function Statistics() {
         <MiniStat label="Longest streak" value={`${summary.longest_streak}d`} />
       </div>
 
-      <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6 mb-6">
+      <div className="min-w-0 max-w-full overflow-hidden bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6 mb-6">
         <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">30-day completion trend</div>
-        <div className="h-64">
+        <div className="h-64 min-w-0 max-w-full overflow-hidden">
           <ResponsiveContainer minWidth={0} minHeight={1}>
             <AreaChart data={trend}>
               <defs>
@@ -70,10 +70,10 @@ export default function Statistics() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
+      <div className="grid min-w-0 max-w-full grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="min-w-0 max-w-full overflow-hidden bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
           <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">By category</div>
-          <div className="h-64">
+          <div className="h-64 min-w-0 max-w-full overflow-hidden">
           <ResponsiveContainer minWidth={0} minHeight={1}>
               <PieChart>
                 <Pie data={byCat} dataKey="total" nameKey="name" innerRadius={50} outerRadius={90} strokeWidth={0}>
@@ -86,9 +86,9 @@ export default function Statistics() {
           </div>
         </div>
 
-        <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
+        <div className="min-w-0 max-w-full overflow-hidden bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
           <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A] mb-4">By priority</div>
-          <div className="h-64">
+          <div className="h-64 min-w-0 max-w-full overflow-hidden">
           <ResponsiveContainer minWidth={0} minHeight={1}>
               <BarChart data={byPrio}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />

@@ -53,10 +53,25 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  max-width: 100%;
 }
 
 body {
   margin: 0;
+  overflow-x: hidden;
+}
+
+.app-shell, .app-main-content {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.app-main-content {
+  overflow-x: hidden;
+}
+
+.recharts-responsive-container, .recharts-wrapper, .recharts-surface {
+  max-width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {

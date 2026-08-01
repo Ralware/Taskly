@@ -30,10 +30,10 @@ function Shell() {
   }, [loadAll]);
 
   return (
-    <div className="min-h-screen bg-black p-6 text-[#F2F2F2] md:flex md:gap-6">
+    <div className="app-shell min-h-screen bg-black p-6 text-[#F2F2F2] md:flex md:gap-6">
       <Sidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
-        <main className="flex-1 min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
+        <main className="app-main-content flex-1 min-w-0 w-full overflow-x-hidden">
           <Suspense fallback={<div className="p-8 text-[#71717A]">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
