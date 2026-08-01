@@ -70,7 +70,7 @@ body {
   overflow-x: hidden;
 }
 
-.recharts-responsive-container, .recharts-wrapper, .recharts-surface {
+.recharts-responsive-container {
   max-width: 100%;
 }
 
