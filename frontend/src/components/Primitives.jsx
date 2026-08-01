@@ -1,9 +1,9 @@
-export function PageHeader({ title, subtitle, actions }) {
+export function PageHeader({ title, subtitle, actions, compact = false }) {
   return (
-    <div className="flex items-start justify-between gap-6 mb-8">
+    <div className={`flex items-start justify-between gap-4 ${compact ? "mb-4" : "mb-8"}`}>
       <div>
-        <h1 className="font-display text-4xl tracking-tight font-medium text-[#F2F2F2]">{title}</h1>
-        {subtitle && <p className="text-sm text-[#A1A1AA] mt-2 max-w-2xl">{subtitle}</p>}
+        <h1 className={`font-display tracking-tight font-medium text-[#F2F2F2] ${compact ? "text-3xl" : "text-4xl"}`}>{title}</h1>
+        {subtitle && <p className={`text-sm text-[#A1A1AA] max-w-2xl ${compact ? "mt-1" : "mt-2"}`}>{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>

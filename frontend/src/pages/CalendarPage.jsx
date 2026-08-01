@@ -3,10 +3,9 @@ import { useStore } from "@/store/store";
 import { PageHeader } from "@/components/Primitives";
 import {
   addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek,
-  eachDayOfInterval, isSameMonth, isSameDay, format, parseISO
+  eachDayOfInterval, isSameMonth, isSameDay, format
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { fmtDate } from "@/lib/utils-date";
 
 export default function CalendarPage() {
   const { tasks, revisions } = useStore();
@@ -38,34 +37,35 @@ export default function CalendarPage() {
   }, [tasks, revisions]);
 
   const selectedItems = dayMap[format(selected, "yyyy-MM-dd")] || [];
+  const weekCount = Math.ceil(days.length / 7);
 
   return (
-    <div className="p-8 lg:p-12" data-testid="calendar-page">
-      <PageHeader title="Calendar" subtitle="Zoom out on your commitments. Select any day to inspect it." />
+    <div className="calendar-page p-5 lg:p-6" data-testid="calendar-page">
+      <PageHeader compact title="Calendar" subtitle="Select a day to inspect your commitments." />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="font-display text-2xl">{format(month, "MMMM yyyy")}</div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(260px,1fr)] lg:flex-1 lg:min-h-0">
+        <section className="surface-card flex min-h-[460px] flex-col p-3 sm:p-4 lg:min-h-0">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <h2 className="font-display text-xl">{format(month, "MMMM yyyy")}</h2>
             <div className="flex items-center gap-1">
-              <button onClick={() => setMonth(subMonths(month, 1))} data-testid="cal-prev" className="p-2 rounded hover:bg-[#121214] text-[#A1A1AA]">
+              <button aria-label="Previous month" onClick={() => setMonth(subMonths(month, 1))} data-testid="cal-prev" className="icon-button">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button onClick={() => setMonth(new Date())} className="px-3 py-1 text-xs font-mono text-[#A1A1AA] hover:text-white rounded hover:bg-[#121214]">
+              <button onClick={() => setMonth(new Date())} className="px-2 py-1 text-[11px] font-mono text-[#A1A1AA] hover:text-white rounded hover:bg-[#121214] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--acid)]/50">
                 TODAY
               </button>
-              <button onClick={() => setMonth(addMonths(month, 1))} data-testid="cal-next" className="p-2 rounded hover:bg-[#121214] text-[#A1A1AA]">
+              <button aria-label="Next month" onClick={() => setMonth(addMonths(month, 1))} data-testid="cal-next" className="icon-button">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-7 gap-1 mb-2">
+          <div className="grid grid-cols-7 gap-1 mb-1">
             {["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"].map((d) => (
-              <div key={d} className="text-[10px] font-mono uppercase tracking-widest text-[#71717A] px-2 py-1">{d}</div>
+              <div key={d} className="px-1 py-0.5 text-[10px] font-mono uppercase tracking-widest text-[#71717A]">{d}</div>
             ))}
           </div>
-          <div className="grid grid-cols-7 gap-1">
+          <div className="grid flex-1 min-h-0 grid-cols-7 gap-1" style={{ gridTemplateRows: `repeat(${weekCount}, minmax(0, 1fr))` }}>
             {days.map((d) => {
               const key = format(d, "yyyy-MM-dd");
               const items = dayMap[key] || [];
@@ -77,13 +77,14 @@ export default function CalendarPage() {
                   key={key}
                   onClick={() => setSelected(d)}
                   data-testid={`cal-day-${key}`}
-                  className={`aspect-square rounded-md text-left p-1.5 border transition-colors ${
+                  aria-label={`${format(d, "MMMM d, yyyy")}${items.length ? `, ${items.length} scheduled item${items.length === 1 ? "" : "s"}` : ""}`}
+                  className={`h-full min-h-0 rounded-md text-left p-1 border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--acid)]/70 ${
                     isSel
                       ? "border-[var(--acid)] bg-[var(--acid)]/5"
                       : "border-transparent hover:border-[#333] hover:bg-[#121214]"
                   } ${!isCurrent ? "opacity-30" : ""}`}
                 >
-                  <div className={`font-mono text-xs ${isToday ? "text-[var(--acid)] font-bold" : "text-[#F2F2F2]"}`}>{format(d, "d")}</div>
+                  <div className={`font-mono text-xs leading-none ${isToday ? "text-[var(--acid)] font-bold" : "text-[#F2F2F2]"}`}>{format(d, "d")}</div>
                   <div className="flex gap-0.5 mt-1 flex-wrap">
                     {items.slice(0, 3).map((it, idx) => (
                       <span
@@ -99,12 +100,12 @@ export default function CalendarPage() {
               );
             })}
           </div>
-        </div>
+        </section>
 
-        <div className="bg-[#0A0A0A] border border-[#1f1f22] rounded-xl p-6">
+        <aside className="surface-card flex min-h-[220px] flex-col p-4 lg:min-h-0">
           <div className="font-mono text-[10px] uppercase tracking-widest text-[#71717A]">Selected</div>
-          <div className="font-display text-2xl mt-1">{format(selected, "EEE, MMM d")}</div>
-          <div className="mt-4 space-y-2">
+          <div className="font-display text-xl mt-1">{format(selected, "EEE, MMM d")}</div>
+          <div className="mt-3 space-y-2 overflow-y-auto pr-1">
             {selectedItems.length === 0 ? (
               <div className="text-sm text-[#71717A]">Nothing scheduled.</div>
             ) : (
@@ -128,7 +129,7 @@ export default function CalendarPage() {
               ))
             )}
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );
