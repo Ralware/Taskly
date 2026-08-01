@@ -4,6 +4,8 @@ import { PageHeader } from "@/components/Primitives";
 import { useStore } from "@/store/store";
 import { Select, Switch } from "@/components/ui-atoms";
 import { useTheme } from "@/components/ThemeProvider";
+import { Link } from "react-router-dom";
+import { Database } from "lucide-react";
 
 const ACCENT_COLORS = ["#D4FF00", "#00E5FF", "#FF3366", "#00FFAA", "#FFB800"];
 
@@ -69,6 +71,11 @@ export default function Settings() {
         <Row label="Automatic backups" hint="Snapshot data periodically.">
           <Switch checked={form.auto_backup} onChange={(v) => persist({ auto_backup: v })} testid="toggle-auto-backup" />
         </Row>
+
+        <Link to="/backup" className="surface-card flex min-h-[76px] items-center justify-between gap-6 p-5 transition-colors hover:bg-[var(--surface-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--acid)]">
+          <div><div className="font-display text-[15px] text-[var(--text-primary)]">Import &amp; Export</div><div className="mt-1 text-xs text-[var(--muted)]">Export a backup or restore your workspace.</div></div>
+          <Database className="h-5 w-5 shrink-0 text-[var(--text-secondary)]" aria-hidden="true" />
+        </Link>
       </div>
     </div>
   );
