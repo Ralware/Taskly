@@ -16,7 +16,6 @@ const DEFAULT_SETTINGS = {
   theme: "dark",
   accent_color: "#D4FF00",
   default_view: "dashboard",
-  revision_schedule: [1, 3, 7, 14, 30],
   notifications_enabled: true,
   auto_backup: true,
 };
@@ -31,9 +30,6 @@ async function getSettings() {
     ...DEFAULT_SETTINGS,
     ...stored,
     theme: stored.theme === "light" ? "light" : "dark",
-    revision_schedule: Array.isArray(stored.revision_schedule)
-      ? stored.revision_schedule.filter((days) => Number.isInteger(days) && days > 0)
-      : DEFAULT_SETTINGS.revision_schedule,
   };
   return settings;
 }
@@ -74,7 +70,6 @@ export const api = {
       tags: data.tags || [],
       pinned: !!data.pinned,
       favorite: !!data.favorite,
-      revision_enabled: !!data.revision_enabled,
       recurrence: data.recurrence || "none",
       created_at: now(),
       updated_at: now(),
@@ -115,26 +110,6 @@ export const api = {
         updated_at: now(),
       });
     }
-    // Spaced revisions
-    if (t.revision_enabled) {
-      const s = await getSettings();
-      const schedule = s.revision_schedule || [1, 3, 7, 14, 30];
-      const base = new Date();
-      for (const days of schedule) {
-        const d = new Date(base);
-        d.setDate(d.getDate() + days);
-        await db.revisions.put({
-          id: uid(),
-          task_id: id,
-          due_date: d.toISOString().slice(0, 10),
-          interval_days: days,
-          completed: false,
-          completed_at: null,
-          notes: "",
-          created_at: now(),
-        });
-      }
-    }
     return patch;
   },
   pinTask: async (id) => {
@@ -151,7 +126,6 @@ export const api = {
   },
   deleteTask: async (id) => {
     await db.tasks.delete(id);
-    await db.revisions.where("task_id").equals(id).delete();
     return { deleted: 1 };
   },
 
@@ -169,28 +143,6 @@ export const api = {
     return patch;
   },
   deleteCategory: async (id) => { await db.categories.delete(id); return { deleted: 1 }; },
-
-  // ---- revisions ----
-  listRevisions: async (params = {}) => {
-    let list = await db.revisions.toArray();
-    if (params.due_only) {
-      const t = today();
-      list = list.filter((r) => !r.completed && r.due_date <= t);
-    }
-    return list;
-  },
-  createRevision: async (d) => {
-    const r = { id: uid(), completed: false, completed_at: null, notes: "", created_at: now(), ...d };
-    await db.revisions.put(r);
-    return r;
-  },
-  completeRevision: async (id, notes = "") => {
-    const r = await db.revisions.get(id);
-    const patch = { ...r, completed: true, completed_at: now(), notes };
-    await db.revisions.put(patch);
-    return patch;
-  },
-  deleteRevision: async (id) => { await db.revisions.delete(id); return { deleted: 1 }; },
 
   // ---- notes ----
   listNotes: () => db.notes.toArray(),
@@ -255,13 +207,11 @@ export const api = {
   // ---- stats ----
   statsSummary: async () => {
     const all = await db.tasks.toArray();
-    const revs = await db.revisions.toArray();
     const completed = all.filter((t) => t.status === "completed");
     const t = today();
     const dueToday = all.filter((x) => (x.due_date || "").startsWith(t) && x.status !== "completed");
     const overdue = all.filter((x) => x.due_date && x.due_date.slice(0, 10) < t && x.status !== "completed");
     const upcoming = all.filter((x) => x.due_date && x.due_date.slice(0, 10) > t && x.status !== "completed");
-    const revisions_due = revs.filter((r) => !r.completed && r.due_date <= t).length;
 
     const doneDates = [...new Set(completed.filter((x) => x.completed_at).map((x) => x.completed_at.slice(0, 10)))].sort();
     const doneDateSet = new Set(doneDates);
@@ -295,7 +245,6 @@ export const api = {
       due_today: dueToday.length,
       upcoming: upcoming.length,
       overdue: overdue.length,
-      revisions_due,
       productivity: all.length ? Math.round((completed.length / all.length) * 1000) / 10 : 0,
       current_streak,
       longest_streak,
@@ -351,7 +300,6 @@ export const api = {
     settings: await db.settings.get("default"),
     tasks: await db.tasks.toArray(),
     categories: await db.categories.toArray(),
-    revisions: await db.revisions.toArray(),
     notes: await db.notes.toArray(),
     projects: await db.projects.toArray(),
   }),
@@ -360,8 +308,8 @@ export const api = {
     const ver = payload.schema_version ?? payload.metadata?.schema_version ?? 1;
     if (ver > SCHEMA_VERSION) throw new Error(`Backup schema v${ver} is newer than app v${SCHEMA_VERSION}`);
     // Future: run migrations here if ver < SCHEMA_VERSION
-    const tables = ["tasks", "categories", "revisions", "notes", "projects"];
-    await db.transaction("rw", db.tasks, db.categories, db.revisions, db.notes, db.projects, db.settings, async () => {
+    const tables = ["tasks", "categories", "notes", "projects"];
+    await db.transaction("rw", db.tasks, db.categories, db.notes, db.projects, db.settings, async () => {
       if (replace) for (const t of tables) await db[t].clear();
       for (const t of tables) if (Array.isArray(payload[t])) await db[t].bulkPut(payload[t]);
       if (payload.settings) await db.settings.put({ ...payload.settings, id: "default" });

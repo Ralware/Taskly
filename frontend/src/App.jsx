@@ -11,7 +11,6 @@ const Dashboard = lazy(() => import("@/pages/Dashboard"));
 const TodayTasks = lazy(() => import("@/pages/TodayTasks"));
 const AllTasks = lazy(() => import("@/pages/AllTasks"));
 const Completed = lazy(() => import("@/pages/Completed"));
-const RevisionPlanner = lazy(() => import("@/pages/RevisionPlanner"));
 const Categories = lazy(() => import("@/pages/Categories"));
 const CalendarPage = lazy(() => import("@/pages/CalendarPage"));
 const Statistics = lazy(() => import("@/pages/Statistics"));
@@ -41,7 +40,6 @@ function Shell() {
               <Route path="/today" element={<TodayTasks />} />
               <Route path="/all" element={<AllTasks />} />
               <Route path="/completed" element={<Completed />} />
-              <Route path="/revisions" element={<RevisionPlanner />} />
               <Route path="/categories" element={<Categories />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/stats" element={<Statistics />} />

@@ -1,6 +1,6 @@
 import { useStore } from "@/store/store";
 import { daysRemainingLabel } from "@/lib/utils-date";
-import { Pin, Star, Pencil, Trash2, Repeat } from "lucide-react";
+import { Pin, Star, Pencil, Trash2 } from "lucide-react";
 import { IconButton } from "@/components/IconButton";
 
 const priorityStyle = {
@@ -56,7 +56,6 @@ export function TaskCard({ task }) {
             </h3>
             {task.pinned && <Pin strokeWidth={1.5} className="w-3.5 h-3.5 text-[var(--acid)]" />}
             {task.favorite && <Star strokeWidth={1.5} className="w-3.5 h-3.5 text-[#FFB800]" fill="#FFB800" />}
-            {task.revision_enabled && <Repeat strokeWidth={1.5} className="w-3.5 h-3.5 text-[#00E5FF]" />}
           </div>
 
           {task.description && (

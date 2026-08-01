@@ -16,7 +16,6 @@ const emptyTask = {
   tags: [],
   pinned: false,
   favorite: false,
-  revision_enabled: false,
   recurrence: "none",
   project_id: "",
 };
@@ -192,12 +191,6 @@ export function TaskDialog() {
           <div className="flex items-center gap-6 pt-2 flex-wrap">
             <ToggleRow label="Pinned" checked={form.pinned} onChange={(v) => setField("pinned", v)} testid="toggle-pinned" />
             <ToggleRow label="Favorite" checked={form.favorite} onChange={(v) => setField("favorite", v)} testid="toggle-favorite" />
-            <ToggleRow
-              label="Enable spaced revisions"
-              checked={form.revision_enabled}
-              onChange={(v) => setField("revision_enabled", v)}
-              testid="toggle-revision"
-            />
           </div>
         </div>
 

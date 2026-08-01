@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { PageHeader } from "@/components/Primitives";
 import { useStore } from "@/store/store";
-import { Select, Input, Switch } from "@/components/ui-atoms";
+import { Select, Switch } from "@/components/ui-atoms";
 import { useTheme } from "@/components/ThemeProvider";
 
 const ACCENT_COLORS = ["#D4FF00", "#00E5FF", "#FF3366", "#00FFAA", "#FFB800"];
@@ -62,20 +62,7 @@ export default function Settings() {
           </Select>
         </Row>
 
-        <Row label="Revision schedule" hint="Comma-separated interval days for spaced repetition.">
-          <Input
-            data-testid="revision-schedule-input"
-            className="w-48"
-            value={(form.revision_schedule || []).join(", ")}
-            onChange={(e) =>
-              persist({
-                revision_schedule: e.target.value.split(",").map((s) => parseInt(s.trim())).filter((n) => !Number.isNaN(n)),
-              })
-            }
-          />
-        </Row>
-
-        <Row label="Notifications" hint="Enable reminders for due tasks and revisions.">
+        <Row label="Notifications" hint="Enable reminders for due tasks.">
           <Switch checked={form.notifications_enabled} onChange={(v) => persist({ notifications_enabled: v })} testid="toggle-notifications" />
         </Row>
 

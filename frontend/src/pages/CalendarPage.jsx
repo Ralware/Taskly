@@ -8,7 +8,7 @@ import {
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function CalendarPage() {
-  const { tasks, revisions } = useStore();
+  const tasks = useStore((s) => s.tasks);
   const [month, setMonth] = useState(new Date());
   const [selected, setSelected] = useState(new Date());
 
@@ -30,11 +30,8 @@ export default function CalendarPage() {
         (map[key] ||= []).push({ type: "done", data: t });
       }
     });
-    revisions.forEach((r) => {
-      (map[r.due_date] ||= []).push({ type: "rev", data: r });
-    });
     return map;
-  }, [tasks, revisions]);
+  }, [tasks]);
 
   const selectedItems = dayMap[format(selected, "yyyy-MM-dd")] || [];
   const weekCount = Math.ceil(days.length / 7);
@@ -91,7 +88,7 @@ export default function CalendarPage() {
                         key={idx}
                         className="w-1.5 h-1.5 rounded-full"
                         style={{
-                          background: it.type === "done" ? "var(--success)" : it.type === "rev" ? "var(--info)" : "var(--acid)",
+                          background: it.type === "done" ? "var(--success)" : "var(--acid)",
                         }}
                       />
                     ))}
@@ -114,12 +111,12 @@ export default function CalendarPage() {
                   <span
                     className="mt-1.5 w-2 h-2 rounded-full shrink-0"
                     style={{
-                      background: it.type === "done" ? "var(--success)" : it.type === "rev" ? "var(--info)" : "var(--acid)",
+                      background: it.type === "done" ? "var(--success)" : "var(--acid)",
                     }}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-[#F2F2F2]">
-                      {it.type === "rev" ? "Revision" : it.data.title}
+                      {it.data.title}
                     </div>
                     <div className="font-mono text-[11px] text-[#71717A]">
                       {it.type.toUpperCase()}

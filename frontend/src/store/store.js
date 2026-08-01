@@ -9,7 +9,6 @@ async function safe(promise, fallback) {
 export const useStore = create((set, get) => ({
   tasks: [],
   categories: [],
-  revisions: [],
   notes: [],
   projects: [],
   settings: null,
@@ -27,17 +26,16 @@ export const useStore = create((set, get) => ({
 
   loadAll: async () => {
     set({ loading: true });
-    const [tasks, categories, revisions, notes, projects, settings, summary] =
+    const [tasks, categories, notes, projects, settings, summary] =
       await Promise.all([
         safe(api.listTasks(), []),
         safe(api.listCategories(), []),
-        safe(api.listRevisions(), []),
         safe(api.listNotes(), []),
         safe(api.listProjects(), []),
         safe(api.getSettings(), null),
         safe(api.statsSummary(), null),
       ]);
-    set({ tasks, categories, revisions, notes, projects, settings, summary, loading: false });
+    set({ tasks, categories, notes, projects, settings, summary, loading: false });
   },
 
   refreshTasks: async () => {
@@ -47,7 +45,6 @@ export const useStore = create((set, get) => ({
     ]);
     set({ tasks, summary });
   },
-  refreshRevisions: async () => set({ revisions: await safe(api.listRevisions(), get().revisions) }),
   refreshCategories: async () => set({ categories: await safe(api.listCategories(), get().categories) }),
   refreshNotes: async () => set({ notes: await safe(api.listNotes(), get().notes) }),
   refreshProjects: async () => set({ projects: await safe(api.listProjects(), get().projects) }),
@@ -61,19 +58,16 @@ export const useStore = create((set, get) => ({
     const created = await api.createTask(data);
     set((s) => ({ tasks: [created, ...s.tasks] }));
     get().refreshSummary();
-    if (created.revision_enabled) get().refreshRevisions();
   },
   updateTask: async (id, data) => {
     const updated = await api.updateTask(id, data);
     get()._replaceTask(updated);
     get().refreshSummary();
-    if (updated.revision_enabled) get().refreshRevisions();
   },
   toggleTask: async (id) => {
     const updated = await api.toggleTask(id);
     get()._replaceTask(updated);
     get().refreshSummary();
-    if (updated.status === "completed" || updated.revision_enabled) get().refreshRevisions();
     // Recurrence may have created a new task; only fetch tasks in that case
     if (updated.recurrence && updated.recurrence !== "none") {
       const tasks = await safe(api.listTasks(), get().tasks);
@@ -92,6 +86,5 @@ export const useStore = create((set, get) => ({
     await api.deleteTask(id);
     get()._removeTask(id);
     get().refreshSummary();
-    get().refreshRevisions();
   },
 }));
