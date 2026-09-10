@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
+
 :root {
   --background: #000000;
   --surface: #0a0a0a;
@@ -8,6 +11,13 @@
   --sidebar-glass: rgb(18 18 18 / 55%);
   --sidebar-border: rgb(255 255 255 / 8%);
   --acid-color: rgb(212,255,0);
+  --info-color: #00e5ff;
+  --success-color: #00ffaa;
+  --warning-color: #ffb800;
+  --danger-color: #ff3366;
+  --card-background: rgb(18 18 18 / 55%);
+  --card-border: rgb(255 255 255 / 8%);
+  --card-color: #71717A;
 }
 
 * {
@@ -83,8 +93,11 @@ body {
 }
 
 .content {
-  padding:5px;
+  padding:45px 50px;
   flex: 1;
+  display:flex;
+  flex-direction: column;
+  gap:20px;
 }
 
 .nav-link img{
@@ -140,4 +153,48 @@ body {
 .new-task img{
   height:15px;
   width:15px;
+}
+
+.cards {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.each-card {
+    border: 1px solid var(--card-border);
+    background: var(--card-background);
+    padding: 15px;
+    border-radius: 12px;
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+    min-width:200px;
+    height:100px;
+    position: relative;
+    overflow: hidden;
+}
+
+.each-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent, var(--acid-color)), transparent);
+}
+
+.card-title{
+  font-size:10px;
+  color: var(--card-color);
+  letter-spacing: 2px;
+}
+
+.card-stat{
+  color:white;
+  font-weight:500;
+  font-size:36px;
+  font-family: JetBrains Mono, monospace !important;
 }
